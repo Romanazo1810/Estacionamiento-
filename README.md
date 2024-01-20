@@ -43,8 +43,8 @@
 
   <script>
     // Objeto para almacenar las patentes, los tiempos de entrada y los descuentos
-    const patentesEntrada = {};
-    const descuentos = {};
+    let patentesEntrada = JSON.parse(localStorage.getItem('patentesEntrada')) || {};
+    let descuentos = JSON.parse(localStorage.getItem('descuentos')) || {};
 
     function registrarEntrada() {
       const patente = document.getElementById('patenteEntrada').value;
@@ -67,6 +67,9 @@
 
       // Limpiar el campo de entrada
       document.getElementById('patenteEntrada').value = '';
+
+      // Almacenar en localStorage
+      localStorage.setItem('patentesEntrada', JSON.stringify(patentesEntrada));
     }
 
     function calcularCobro() {
@@ -96,30 +99,4 @@
     }
 
     function aplicarDescuento() {
-      const patenteSeleccionada = document.getElementById('patenteSalida').value;
-      const descuentoSeleccionado = parseInt(document.getElementById('descuento').value);
-
-      if (patentesEntrada.hasOwnProperty(patenteSeleccionada)) {
-        // Aplicar descuento y mostrar mensaje
-        descuentos[patenteSeleccionada] = descuentoSeleccionado;
-        alert(`Descuento aplicado: $${descuentoSeleccionado}`);
-      } else {
-        alert('La patente seleccionada no tiene un registro de entrada.');
-      }
-    }
-
-    function mostrarAutosIngresados() {
-      const listaAutos = document.getElementById('listaAutos');
-      listaAutos.innerHTML = '';
-
-      for (const patente in patentesEntrada) {
-        const tiempoEntrada = patentesEntrada[patente].tiempo;
-        const listItem = document.createElement('li');
-        listItem.innerText = `${patente} - Hora de entrada: ${tiempoEntrada.toLocaleTimeString()}`;
-        listaAutos.appendChild(listItem);
-      }
-    }
-  </script>
-
-</body>
-</html>
+      const patenteSeleccionada = document.getElementById('patenteSalida').

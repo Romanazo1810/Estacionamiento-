@@ -42,7 +42,7 @@
   <ul id="listaAutos"></ul>
 
   <script>
-    // Objeto para almacenar las patentes, los tiempos de entrada y los descuentos
+    // Cargar datos almacenados en localStorage al inicio
     let patentesEntrada = JSON.parse(localStorage.getItem('patentesEntrada')) || {};
     let descuentos = JSON.parse(localStorage.getItem('descuentos')) || {};
 
@@ -50,26 +50,30 @@
       const patente = document.getElementById('patenteEntrada').value;
       const tiempoEntrada = new Date();
 
-      patentesEntrada[patente] = {
-        tiempo: tiempoEntrada,
-        descuento: 0
-      };
+      if (patente.trim() !== '') {
+        patentesEntrada[patente] = {
+          tiempo: tiempoEntrada,
+          descuento: 0
+        };
 
-      // Mostrar la hora exacta de entrada
-      document.getElementById('horaEntrada').innerText = `Hora de entrada: ${tiempoEntrada.toLocaleTimeString()}`;
+        // Mostrar la hora exacta de entrada
+        document.getElementById('horaEntrada').innerText = `Hora de entrada: ${tiempoEntrada.toLocaleTimeString()}`;
 
-      // Agregar la patente al select de salidas
-      const selectSalida = document.getElementById('patenteSalida');
-      const option = document.createElement('option');
-      option.value = patente;
-      option.text = patente;
-      selectSalida.add(option);
+        // Agregar la patente al select de salidas
+        const selectSalida = document.getElementById('patenteSalida');
+        const option = document.createElement('option');
+        option.value = patente;
+        option.text = patente;
+        selectSalida.add(option);
 
-      // Limpiar el campo de entrada
-      document.getElementById('patenteEntrada').value = '';
+        // Limpiar el campo de entrada
+        document.getElementById('patenteEntrada').value = '';
 
-      // Almacenar en localStorage
-      localStorage.setItem('patentesEntrada', JSON.stringify(patentesEntrada));
+        // Almacenar en localStorage
+        localStorage.setItem('patentesEntrada', JSON.stringify(patentesEntrada));
+      } else {
+        alert('Por favor, ingresa una patente válida.');
+      }
     }
 
     function calcularCobro() {
@@ -99,4 +103,33 @@
     }
 
     function aplicarDescuento() {
-      const patenteSeleccionada = document.getElementById('patenteSalida').
+      const patenteSeleccionada = document.getElementById('patenteSalida').value;
+      const descuentoSeleccionado = parseInt(document.getElementById('descuento').value);
+
+      if (patentesEntrada.hasOwnProperty(patenteSeleccionada)) {
+        // Aplicar descuento y mostrar mensaje
+        descuentos[patenteSeleccionada] = descuentoSeleccionado;
+        alert(`Descuento aplicado: $${descuentoSeleccionado}`);
+      } else {
+        alert('La patente seleccionada no tiene un registro de entrada.');
+      }
+
+      // Almacenar en localStorage después de aplicar descuento
+      localStorage.setItem('descuentos', JSON.stringify(descuentos));
+    }
+
+    function mostrarAutosIngresados() {
+      const listaAutos = document.getElementById('listaAutos');
+      listaAutos.innerHTML = '';
+
+      for (const patente in patentesEntrada) {
+        const tiempoEntrada = patentesEntrada[patente].tiempo;
+        const listItem = document.createElement('li');
+        listItem.innerText = `${patente} - Hora de entrada: ${tiempoEntrada.toLocaleTimeString()}`;
+        listaAutos.appendChild(listItem);
+      }
+    }
+  </script>
+
+</body>
+</html>
